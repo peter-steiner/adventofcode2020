@@ -21,25 +21,36 @@ def readInput():
     return data
 
 def a():
-    rows = [int(n) for n in readInput().split('\n')]
+    expenses = [int(n) for n in readInput().split('\n')]
     res = 0
-    for row in rows:
+    for row in expenses:
         se = 2020 - row
         #print("expense: ", row, se)
-        if se in rows:        
+        if se in expenses:        
             print("expense: %d, %d", row, se)
             res = row * se
             break
     print("A): ", res)
 
 def b():
-    rows = [n for n in readInput().split('\n')]
+    expenses = [int(n) for n in readInput().split('\n')]
     res = 0
-
+    for exp in expenses:
+        for exp_b in expenses:
+            se = 2020 - exp
+            if se < 2020:
+                se = 2020 - exp - exp_b
+                if se >= 0 and se in expenses:        
+                    print("expense: %d, %d", exp, exp_b, se)
+                    res = exp * exp_b * se
+                    break
+        if res > 0:
+            break
+        
     print("B): ", res)
 
 # Main body
 if __name__ == '__main__':
     a()
-#    b()
+    b()
     sys.exit(1)
