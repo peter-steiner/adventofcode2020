@@ -24,7 +24,7 @@ def a():
     pws = [n for n in readInput().split('\n')]
     count = 0
     for row in pws:
-        criteria, pw = row.split(sep:=":")
+        criteria, pw = row.split(":")
         occurance, char = criteria.split(" ")
         mino, maxo = [int(n) for n in occurance.split("-")]
 
@@ -40,7 +40,7 @@ def b():
     pws = [n for n in readInput().split('\n')]
     count = 0
     for row in pws:
-        criteria, pw = row.split(sep:=":")
+        criteria, pw = row.split(":")
         occurance, char = criteria.split(" ")
         mino, maxo = [int(n) for n in occurance.split("-")]
 
