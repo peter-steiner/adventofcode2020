@@ -37,13 +37,28 @@ def a():
     print("A): ", count)
 
 def b():
-    items = [int(n) for n in readInput().split('\n')]
-    res = 0
+    pws = [n for n in readInput().split('\n')]
+    count = 0
+    for row in pws:
+        criteria, pw = row.split(sep:=":")
+        occurance, char = criteria.split(" ")
+        mino, maxo = [int(n) for n in occurance.split("-")]
 
-    print("B): ", res)
+        tmp = ""
+        if mino >= 0 or mino < len(pw):
+            tmp += pw[mino]
+        if maxo >= 0 or maxo < len(pw):
+            tmp += pw[maxo]
+        
+        occurance_real = tmp.count(char)
+        if occurance_real == 1:            
+            #print("occurance, char", occurance_real, char, mino, maxo, pw)
+            count += 1
+
+    print("B): ", count)
 
 # Main body
 if __name__ == '__main__':
-    a()
-#    b()
+#    a()
+    b()
     sys.exit(1)
