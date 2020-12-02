@@ -11,7 +11,7 @@ import re
 import math
 
 # Global variables
-task="d2-t"
+task="d2"
 infile=task + ".input"
 
 def readInput():
@@ -21,10 +21,20 @@ def readInput():
     return data
 
 def a():
-    items = [int(n) for n in readInput().split('\n')]
-    res = 0
+    pws = [n for n in readInput().split('\n')]
+    count = 0
+    for row in pws:
+        criteria, pw = row.split(sep:=":")
+        occurance, char = criteria.split(" ")
+        mino, maxo = [int(n) for n in occurance.split("-")]
 
-    print("A): ", res)
+        occurance_real = pw.count(char)
+        if occurance_real >= mino and occurance_real <= maxo:            
+#            print("row", row, criteria, pw, occurance, char)
+            print("occurance, char", occurance_real, char, mino, maxo, pw)
+            count += 1
+
+    print("A): ", count)
 
 def b():
     items = [int(n) for n in readInput().split('\n')]
@@ -35,5 +45,5 @@ def b():
 # Main body
 if __name__ == '__main__':
     a()
-    b()
+#    b()
     sys.exit(1)
