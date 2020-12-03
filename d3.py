@@ -11,7 +11,7 @@ import re
 import math
 
 # Global variables
-task="d2"
+task="d3"
 infile=task + ".input"
 
 def readInput():
@@ -20,45 +20,59 @@ def readInput():
     file.close()
     return data
 
+def printForest(forest):
+    for slot in forest:
+        print("".join(slot)) 
+
+def calc_multiplier(rows):
+    length = len(rows) * 3
+    act_length = len(rows[0])
+    return math.ceil(length / act_length) + 1
+
 def a():
-    pws = [n for n in readInput().split('\n')]
+    rows = [n for n in readInput().split('\n')]
     count = 0
-    for row in pws:
-        criteria, pw = row.split(":")
-        occurance, char = criteria.split(" ")
-        mino, maxo = [int(n) for n in occurance.split("-")]
 
-        occurance_real = pw.count(char)
-        if occurance_real >= mino and occurance_real <= maxo:            
-#            print("row", row, criteria, pw, occurance, char)
-            print("occurance, char", occurance_real, char, mino, maxo, pw)
-            count += 1
+    multiplier = calc_multiplier(rows)
+    it = len(rows)
+    print("Multiplier", multiplier)
 
-    print("A): ", count)
+    forest = []
+    for slot in rows:
+        ext_slot = ""
+        for n in range(multiplier):
+            ext_slot += slot
+        forest.append(list(ext_slot))
+
+    #print("rad 0", forest[0])
+    step = 1
+    x = 3
+    trees = 0
+    while step < it:
+        slot = forest[step][x]
+#        print("slot", slot, step, x)
+ #       print("rad", forest[step])
+        forest[step][x] = "O"
+        if slot == "#":
+            trees += 1
+  #          print(forest[step][x])
+            forest[step][x]
+            forest[step][x] = "X"        
+        step += 1
+        x += 3
+
+    printForest(forest)
+
+
+    print("A): ", trees)
 
 def b():
-    pws = [n for n in readInput().split('\n')]
+    rows = [n for n in readInput().split('\n')]
     count = 0
-    for row in pws:
-        criteria, pw = row.split(":")
-        occurance, char = criteria.split(" ")
-        mino, maxo = [int(n) for n in occurance.split("-")]
-
-        tmp = ""
-        if mino >= 0 or mino < len(pw):
-            tmp += pw[mino]
-        if maxo >= 0 or maxo < len(pw):
-            tmp += pw[maxo]
-        
-        occurance_real = tmp.count(char)
-        if occurance_real == 1:            
-            #print("occurance, char", occurance_real, char, mino, maxo, pw)
-            count += 1
-
     print("B): ", count)
 
 # Main body
 if __name__ == '__main__':
     a()
-    b()
+#    b()
     sys.exit(1)
