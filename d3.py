@@ -1,7 +1,7 @@
 #!/user/bin/env python3 -tt
 """
 Task:
-https://adventofcode.com/2020/day/2
+https://adventofcode.com/2020/day/3
 """
 
 # Imports
@@ -24,18 +24,15 @@ def printForest(forest):
     for slot in forest:
         print("".join(slot)) 
 
-def calc_multiplier(rows):
-    length = len(rows) * 3
+def calc_multiplier(rows, slope):
+    length = len(rows) * slope[0]
     act_length = len(rows[0])
     return math.ceil(length / act_length) + 1
 
-def a():
-    rows = [n for n in readInput().split('\n')]
-    count = 0
+def getTreesCountForSlope(rows, slope):
 
-    multiplier = calc_multiplier(rows)
+    multiplier = calc_multiplier(rows, slope)
     it = len(rows)
-    print("Multiplier", multiplier)
 
     forest = []
     for slot in rows:
@@ -44,35 +41,41 @@ def a():
             ext_slot += slot
         forest.append(list(ext_slot))
 
-    #print("rad 0", forest[0])
-    step = 1
-    x = 3
+    step = slope[1]
+    x = slope[0]
     trees = 0
     while step < it:
         slot = forest[step][x]
-#        print("slot", slot, step, x)
- #       print("rad", forest[step])
         forest[step][x] = "O"
         if slot == "#":
             trees += 1
-  #          print(forest[step][x])
             forest[step][x]
             forest[step][x] = "X"        
-        step += 1
-        x += 3
+        step += slope[1]
+        x += slope[0]
 
-    printForest(forest)
+    #printForest(forest)
+    return trees
 
+def a():
+    rows = [n for n in readInput().split('\n')]
 
+    trees = getTreesCountForSlope(rows, [3,1])
     print("A): ", trees)
 
 def b():
     rows = [n for n in readInput().split('\n')]
-    count = 0
-    print("B): ", count)
+    slopes = [[1,1],[3,1],[5,1],[7,1],[1,2]] 
+
+    slopeTrees = 1
+    for slope in slopes:
+        slopeTrees *= getTreesCountForSlope(rows, slope)
+        #print(getTreesCountForSlope(rows, slope))
+
+    print("B): ", slopeTrees)
 
 # Main body
 if __name__ == '__main__':
     a()
-#    b()
+    b()
     sys.exit(1)
