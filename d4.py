@@ -21,10 +21,37 @@ def readInput():
     return data
 
 def validateFields(key, value):
-    valid = False
-
-
-    return valid
+    RE_INT = re.compile(r'^[0-9]+$')
+    if key == "byr" and RE_INT.match(value):
+        v = int(value)
+        if v >= 1920 and v <= 2002: 
+            return True
+    if key == "iyr" and RE_INT.match(value):
+        v = int(value)
+        if v >= 2010 and v <= 2020: 
+            return True
+    if key == "eyr" and RE_INT.match(value):
+        v = int(value)
+        if v >= 2020 and v <= 2030: 
+            return True
+    if key == "hgt" and re.match(r'^([\d]+(cm|in))$', value):
+        height = int(re.findall('[\d]+', value)[0])
+        metric = value.replace(str(height), "")
+        if metric == "cm":
+            if height >= 150 and height <= 193: 
+                return True
+        if metric == "in": 
+            if height >= 59 and height <= 76: 
+                return True
+    if key == "hcl" and re.match(r'^(#{1}([0-9|a-f]{6}))$', value):
+        return True
+    if key == "ecl" and re.match(r'^(amb|blu|brn|gry|grn|hzl|oth)$', value):
+#        print("valid haircolor: ", value)
+        return True
+    if key == "pid" and re.match(r'^([0-9]{9})$', value):
+        return True
+        
+    return False
 
 def validatePassportA(passport):
     expectedFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
@@ -45,11 +72,9 @@ def validatePassportB(passport):
         key = f.split(":")[0]
         value = f.split(":")[1]
         if validateFields(key, value):
-            fieldKeys.append(f.split(":")[0])
+            fieldKeys.append(key)
     
     fieldKeys.sort()
-
-    #print("Validate fieldkeys: ", fieldKeys)
     for f in expectedFields:
         if f not in fieldKeys:
             return False
@@ -67,7 +92,7 @@ def extractPassports(rows):
                 pp += row
             else:
                 pp += " " + row
-    print("Found passports: ", len(passports))
+    #print("Found passports: ", len(passports))
     return passports
 
 def a():
@@ -80,7 +105,6 @@ def a():
     for passport in passports:
         if validatePassportA(passport):
             count += 1
-        #print(passport, validatePassport(passport))
 
     print("A): ", count)
 
@@ -92,13 +116,12 @@ def b():
     passports = extractPassports(rows)
 
     for passport in passports:
-        if validatePassportA(passport):
+        if validatePassportB(passport):
             count += 1
-        #print(passport, validatePassport(passport))
 
     print("B): ", count)
 # Main body
 if __name__ == '__main__':
     a()
-#    b()
+    b()
     sys.exit(1)
