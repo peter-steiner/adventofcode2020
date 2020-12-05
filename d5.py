@@ -11,8 +11,8 @@ import re
 import math
 
 # Global variables
-task="d5-t"
-#task="d5"
+#task="d5-t"
+task="d5"
 infile=task + ".input"
 
 def readInput():
@@ -59,19 +59,21 @@ def a():
     for bp in bps:
         section = [0, 127]
         seat = [0,7]
-        #print(bp)
+        
         sm = [n for n in bp[0:7]]
         cm = [n for n in bp[7:10]]
-        #print(sm, cm)
+        
         for s in sm:
             section = findSection(s, section)
         for c in cm:
             seat = findSeat(c, seat)
         r, s = section[0], seat[0]
         seatID = r*8+s
-        print(seatID, r, s)
+        #print(seatID, r, s)
         seatIDs.append(seatID)
 
+    seatIDs.sort()
+    #print(seatIDs)
     maxSeatID = max(seatIDs)
     print("A): ", maxSeatID)
 
