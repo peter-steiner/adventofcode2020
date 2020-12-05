@@ -27,7 +27,7 @@ def findSection(cmd, section):
     h = round((u-l)/2)
     if h == 0:
         h=1
-    if cmd == "F":
+    if cmd == "F" or cmd == "L":
         # lower half
         u = u-h
     else:
@@ -36,35 +36,21 @@ def findSection(cmd, section):
     return [l, u]
 
 def findSeat(cmd, seat):
-    l, u = seat[0], seat[1]
-    h = round((u-l)/2)
-    if h == 0:
-        h=1
-    if cmd == "L":
-        # lower half
-        u = u-h
-    else:
-        # Upper half
-        l = l+h
-    return [l, u]
+    return findSection(cmd, seat)
 
 def a():
     bps = [n for n in readInput().split('\n')]
     
-    sm = []
-    cm = []
     seatIDs = []
     for bp in bps:
         section = [0, 127]
         seat = [0,7]
-        
         sm = [n for n in bp[0:7]]
-        cm = [n for n in bp[7:10]]
-        
+        cm = [n for n in bp[7:10]]        
         for s in sm:
             section = findSection(s, section)
         for c in cm:
-            seat = findSeat(c, seat)
+            seat = findSection(c, seat)
         r, s = section[0], seat[0]
         seatID = r*8+s
         seatIDs.append(seatID)
