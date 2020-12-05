@@ -1,7 +1,7 @@
 #!/user/bin/env python3 -tt
 """
 Task:
-https://adventofcode.com/2020/day/1
+https://adventofcode.com/2020/day/5
 """
 
 # Imports
@@ -33,7 +33,6 @@ def findSection(cmd, section):
     else:
         # Upper half
         l = l+h
-    #print("Move section", cmd, [l, u])
     return [l, u]
 
 def findSeat(cmd, seat):
@@ -47,7 +46,6 @@ def findSeat(cmd, seat):
     else:
         # Upper half
         l = l+h
-    #print("Move seat", cmd, [l, u])
     return [l, u]
 
 def a():
@@ -69,19 +67,18 @@ def a():
             seat = findSeat(c, seat)
         r, s = section[0], seat[0]
         seatID = r*8+s
-        #print(seatID, r, s)
         seatIDs.append(seatID)
 
     seatIDs.sort()
-    #print(seatIDs)
+#    print(seatIDs)
     maxSeatID = max(seatIDs)
     print("A): ", maxSeatID)
-
-def b():
-    bps = [int(n) for n in readInput().split('\n')]
-    res = 0
-
-    print("B): ", res)
+    
+    for n in range(1, len(seatIDs)-1):
+        t = seatIDs[n]
+        if seatIDs[n-1] != (t-1) or seatIDs[n+1] != (t+1):
+            print("B) My seat:", seatIDs[n] + 1)
+            break
 
 # Main body
 if __name__ == '__main__':
