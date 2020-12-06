@@ -27,7 +27,7 @@ def a():
     groups = []
     g = ""
     for row in rows:
-        print(row)
+        #print(row)
         g += row
         if len(row) == 0:
             groups.append(g)
@@ -42,11 +42,26 @@ def a():
 def b():
     rows = [n for n in readInput().split('\n')]
     res = 0
+    groups = []
+    g = []
+    for row in rows:
+        g.append(list(row))
+        if len(row) == 0:
+            gs = g[0]
+            for n in g:
+                if len(n)>0:
+                    gs = list(set(gs) & set(n))
+#            print("Union: ", gs, len(gs))
+            groups.append(gs)
+            g = []
 
+    for group in groups:
+        g = "".join(set(group))
+        res += len(g)
     print("B): ", res)
 
 # Main body
 if __name__ == '__main__':
-    a()
+    #a()
     b()
     sys.exit(1)
