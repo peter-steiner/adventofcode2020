@@ -20,26 +20,31 @@ def readInput():
     file.close()
     return data
 
-def buildBagTree(bags, name, references, path, it):
-    it += 1
+def buildBagTree(bags, name, count, references):
     # is empty
-    #print("br", name, references, path)
     if len(references) == 0:
-        return name
+        return count
     if "shinygold" in references:
-        return "shinygold"
+        return count
+
     #visit children if not already visited
-    for bagName in references:
-        if bagName not in path:
-#            print("LF {} ref: {}, path: {}, it: {}".format(bagName, bags[bagName], path, it))     
-            path += " " + buildBagTree(bags, bagName, bags[bagName], path, it)
-            path = " ".join(set(path.split(" ")))
-#    print("N: {} P: {}".format(name, path))
-    return path
+    tmpCount = 0
+    for ref in references:
+        c1, bagName = ref.split("#")
+        c2 = buildBagTree(bags, bagName, int(c1), bags[bagName])
+        # First level doens't count
+        if count == 0:
+            tmpCount += c2
+        else:
+            # Multiply by number of containers
+            tmpCount += count*c2
+    #Add number of bags at current level
+    tmpCount += count
+#    print("C: {} N: {} P: {}".format(tmpCount, name, path))
+    return tmpCount
 
 def a():
     rows = [n for n in readInput().split('\n')]
-    res = 0
 
     bags = {}
     # Parse bags and relations
@@ -52,35 +57,22 @@ def a():
             relBags = holds.split(", ")
             for b in relBags:
                 #cleanup
+                c = re.sub("(bag[s]*[\.]*)", "", b).split(" ")[0]
                 s = re.sub("(bag[s]*[\.]*)", "", b).replace(" ", "")
                 bagRelName = re.sub(r'[\d]*', "", s)
-                bagsRel.append(bagRelName)
-        #print(bagName, bagsRel)
+                bagsRel.append(c + "#" + bagRelName)
         bags[bagName] = bagsRel
 
+    maxBags = 0
     for ref in bags:
-        """
-        print("###########################################")
-        print("###########################################")
-        print("R", ref, bags[ref])
-        print("-------------------------------------------")
-        """
-        rawPath = buildBagTree(bags, ref, bags[ref], "", 0)
-        tree = " ".join(set(rawPath.split(" ")))
-        if "shinygold" in tree:
-            res += 1
-        #print("refTree", " ".join(set(rawPath.split(" "))))
+        if ref == "shinygold":
+            c = buildBagTree(bags, ref, 0, bags[ref])
+            if c > maxBags:
+                maxBags = c
 
-    print("A): ", res)
-
-def b():
-    rows = [int(n) for n in readInput().split('\n')]
-    res = 0
-
-    print("B): ", res)
+    print("B): ", maxBags)
 
 # Main body
 if __name__ == '__main__':
     a()
-#    b()
     sys.exit(1)

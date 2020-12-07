@@ -10,7 +10,7 @@ import os
 import re
 import math
 
-# Global variables
+# Global  variables
 task="d7"
 infile=task + ".input"
 
