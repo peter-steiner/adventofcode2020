@@ -24,8 +24,6 @@ def buildBagTree(bags, name, count, references):
     # is empty
     if len(references) == 0:
         return count
-    if "shinygold" in references:
-        return count
 
     #visit children if not already visited
     tmpCount = 0
@@ -38,7 +36,7 @@ def buildBagTree(bags, name, count, references):
         else:
             # Multiply by number of containers
             tmpCount += count*c2
-    #Add number of bags at current level
+    # Add number of bags at current level
     tmpCount += count
 #    print("C: {} N: {} P: {}".format(tmpCount, name, path))
     return tmpCount
@@ -57,8 +55,9 @@ def a():
             relBags = holds.split(", ")
             for b in relBags:
                 #cleanup
-                c = re.sub("(bag[s]*[\.]*)", "", b).split(" ")[0]
-                s = re.sub("(bag[s]*[\.]*)", "", b).replace(" ", "")
+                rawBagStr = re.sub("(bag[s]*[\.]*)", "", b)
+                c = rawBagStr.split(" ")[0]
+                s = rawBagStr.replace(" ", "")
                 bagRelName = re.sub(r'[\d]*', "", s)
                 bagsRel.append(c + "#" + bagRelName)
         bags[bagName] = bagsRel
