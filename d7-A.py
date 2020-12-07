@@ -23,7 +23,6 @@ def readInput():
 def buildBagTree(bags, name, references, path, it):
     it += 1
     # is empty
-    #print("br", name, references, path)
     if len(references) == 0:
         return name
     if "shinygold" in references:
@@ -31,10 +30,8 @@ def buildBagTree(bags, name, references, path, it):
     #visit children if not already visited
     for bagName in references:
         if bagName not in path:
-#            print("LF {} ref: {}, path: {}, it: {}".format(bagName, bags[bagName], path, it))     
             path += " " + buildBagTree(bags, bagName, bags[bagName], path, it)
             path = " ".join(set(path.split(" ")))
-#    print("N: {} P: {}".format(name, path))
     return path
 
 def a():
@@ -55,21 +52,13 @@ def a():
                 s = re.sub("(bag[s]*[\.]*)", "", b).replace(" ", "")
                 bagRelName = re.sub(r'[\d]*', "", s)
                 bagsRel.append(bagRelName)
-        #print(bagName, bagsRel)
         bags[bagName] = bagsRel
 
     for ref in bags:
-        """
-        print("###########################################")
-        print("###########################################")
-        print("R", ref, bags[ref])
-        print("-------------------------------------------")
-        """
         rawPath = buildBagTree(bags, ref, bags[ref], "", 0)
         tree = " ".join(set(rawPath.split(" ")))
         if "shinygold" in tree:
             res += 1
-        #print("refTree", " ".join(set(rawPath.split(" "))))
 
     print("A): ", res)
 
