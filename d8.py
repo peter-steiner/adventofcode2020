@@ -58,14 +58,7 @@ def a():
 
     print("A): ", res, it)
 
-def b():
-    rows = [n for n in readInput().split('\n')]
-    res = 0
-
-    print("B): ", res)
-
 # Main body
 if __name__ == '__main__':
     a()
-    b()
     sys.exit(1)
