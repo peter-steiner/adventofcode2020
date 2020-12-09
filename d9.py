@@ -9,9 +9,10 @@ import sys
 import os
 import re
 import math
+import itertools
 
 # Global variables
-task="d9-t"
+task="d9"
 infile=task + ".input"
 
 def readInput():
@@ -22,9 +23,26 @@ def readInput():
 
 
 def a():
-    rows = [n for n in readInput().split('\n')]
+    nmbrs = [int(n) for n in readInput().split('\n')]
     res = 0
 
+    preambleLength = 25
+    preamble = []
+    pos = preambleLength
+
+    while pos < len(nmbrs):   
+        #print("######")
+        preamble = nmbrs[pos-preambleLength:pos]     
+        result = list(itertools.combinations(preamble, 2))
+        match = False
+        for i in result:
+            if sum(i) == nmbrs[pos]:
+                #print(nmbrs[pos], i)
+                match = True
+        if not match:
+            print(nmbrs[pos])
+
+        pos += 1
     print("A): ", res)
 
 # Main body
