@@ -47,12 +47,61 @@ def a():
     res = oneDiff*threeDiff
     print("A): ", res)
 
+globalDiff = 0
+
+def validateDiff(ratings, pos, posPrim, ratingsPath):
+    global globalDiff
+  
+    if posPrim == len(ratings)-1:
+        r = ratings[pos]  
+        n = ratings[posPrim]
+        diff = n-r
+        if diff >= 0 and diff <= 3:
+            ratingsPath += " " + str(ratings[len(ratings)-2])
+            ratingsPath += " " + str(ratings[len(ratings)-1])
+            globalDiff += 1
+            return 
+    if posPrim > len(ratings)-1:
+        return 
+
+    r = ratings[pos]  
+    n = ratings[posPrim]
+    diff = n-r
+    if diff >= 0 and diff <= 3:
+        validateDiff(ratings, posPrim, posPrim+1, ratingsPath + " " + str(r))
+        validateDiff(ratings, posPrim, posPrim+2, ratingsPath + " " + str(r))
+        validateDiff(ratings, posPrim, posPrim+3, ratingsPath + " " + str(r))
+    return
+
+
 def b():
-    nmbrs = [int(n) for n in readInput().split('\n')]
-    res = 0
+    ratings = [int(n) for n in readInput().split('\n')]
 
-    print("B): ", res)
+    global globalDiff
+    globalDiff = 0
+    ratings.insert(0, 0)
+    ratings.append(max(ratings)+3)
+    ratings.sort()
 
+    ratingsPath = ""
+    si = 0
+    subArr = []
+    for n in range(len(ratings)-1):
+        if n < len(ratings)-1 and ratings[n+1] - ratings[n] == 3:
+            subArr.append(ratings[si: n+1])
+            si = n+1
+
+    result = 1
+    for arr in subArr:
+        validateDiff(arr, 0, 1, ratingsPath)
+        validateDiff(arr, 1, 2, ratingsPath)
+        validateDiff(arr, 2, 3, ratingsPath)
+        if globalDiff > 0:
+            result *= globalDiff
+        globalDiff = 0
+    print(ratings)
+
+    print("B):", result)
 
 # Main body
 if __name__ == '__main__':
