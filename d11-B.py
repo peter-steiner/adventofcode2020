@@ -22,7 +22,6 @@ def readInput():
     return data
 
 def checkSeat(snapshot, waitingroom, y, x): 
-    #print("#################", x, y)
     
     if snapshot[y][x] == ".":
         return 
@@ -35,18 +34,30 @@ def checkSeat(snapshot, waitingroom, y, x):
     for xp in dirs:
         for yp in dirs: 
             x1 = x+xp
-            y1 = y+yp        
+            y1 = y+yp
             if x != x1 or y != y1:
                 if x1 >= 0 and x1 < xMax and y1 >= 0 and y1 < yMax:
                     x1 = x+xp
                     y1 = y+yp
-                    surrounding.append(snapshot[y1][x1])
-                    surrounding.append("Z")
-
-    if surrounding.count("X") >= 4:
+                    direction = snapshot[y1][x1]
+                    if direction == "L" or direction == "X":
+                        surrounding.append(direction)
+                    if direction == ".": 
+                        # Try further in path
+                        for n in range(2,xMax):
+                            x2 = x+n*xp
+                            y2 = y+n*yp        
+                            if x2 >= 0 and x2 < xMax and y2 >= 0 and y2 < yMax:
+                                direction = snapshot[y2][x2]
+                                if direction == "L" or direction == "X":
+                                    surrounding.append(direction)
+                                    break
+    if surrounding.count("X") >= 5:
         waitingroom[y][x] = "L"
     if surrounding.count("X") == 0:
         waitingroom[y][x] = "X"
+
+    return 
 
 
 def a():
@@ -59,18 +70,20 @@ def a():
     
     yMax = len(waitingRoom)
     xMax = len(waitingRoom[0])
- 
+
 #########################    
     equals = True
     it = 0
+
+#    for i in range(3):
     while equals:
         snapshot = []
         for y in range(yMax):
             snapshot.append(waitingRoom[y][0:])
 
-#        for s in snapshot: 
-#            print(s)
-#        print("----------------------------------------------------")
+        #for s in snapshot: 
+        #    print(s)
+        #print("----------------------------------------------------")
         
         for y in range(yMax):
             for x in range(xMax):
@@ -87,13 +100,11 @@ def a():
             print("Stabilized chaoz in iterations {} and buzy seats: {}".format(it, sum))
             break
         it += 1
-        equals = True
+        equals = True   
 
     print("a):", res)
-
 
 # Main body
 if __name__ == '__main__':
     a()
-#    b()
     sys.exit(1)
