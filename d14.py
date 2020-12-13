@@ -1,7 +1,7 @@
 #!/user/bin/env python3 -tt
 """
 Task:
-https://adventofcode.com/2020/day/6
+https://adventofcode.com/2020/day/14
 """
 
 # Imports
@@ -11,7 +11,7 @@ import re
 import math
 
 # Global variables
-task="d6-t"
+task="d14-t"
 infile=task + ".input"
 
 def readInput():
@@ -21,37 +21,8 @@ def readInput():
     return data
 
 def a():
-    #rows = [int(n) for n in readInput().split('\n')]
+    rows = [int(n) for n in readInput().split('\n')]
     res = 0
-    n = 0
-    p = 0
-    prev = 0
-    diff = []
-    while p < 20:
-        if (n+37)%457 == 0 and (n+68)%431 == 0:
-            print(n)
-            diff.append(abs(prev-n))
-            prev = n
-            p += 1
-        n +=1
-    
-    for d in diff:
-        print(diff)
-
-    n = 0
-    p = 0
-    prev = 0
-    diff = []
-    while p < 20:
-        if (n+3)%1889 == 0 and (n)%1789 == 0:
-            print(n)
-            diff.append(abs(prev-n))
-            prev = n
-            p += 1
-        n +=1
-    
-    for d in diff:
-        print(diff)
 
     print("A): ", res)
 
