@@ -12,7 +12,7 @@ import math
 import time
 
 # Global variables
-task="d16-t"
+task="d16"
 infile=task + ".input"
 
 def readInput():
@@ -24,10 +24,45 @@ def readInput():
 def a():
     rows = [n for n in readInput().split('\n')]
     
-    for row in rows:
-        print(row)
+    itRow = 0
+    rowCount= len(rows)
+    numbers = ["X"]*1000
+    # Rules
+    print("-------------")
+    for i in range(rowCount):
+        row = rows[i]
+        ranges = re.findall(r"(\d+-\d+)",row)
+        for rng in ranges:
+            frm, to = rng.split("-")
+            for n in range(int(frm), int(to)+1):
+                numbers[n] = "C"
+    
+        itRow += 1
+        if len(row) == 0:    
+            break
 
-    print("A): ")
+    print("-------------")
+    for i in range(itRow, rowCount):
+        row = rows[i]
+        print(row)
+        itRow += 1
+        if len(row) == 0:    
+            break
+
+    sum = 0
+    print("-------------")
+    for i in range(itRow+1, rowCount):
+        row = rows[i]
+        print(row)
+        ticketValues = row.split(",")
+        for tkv in ticketValues:
+            if numbers[int(tkv)] == "X":
+                sum += int(tkv) 
+                print("Invalid ticket", tkv, ticketValues)
+        if len(row) == 0:    
+            break
+
+    print("A): ", sum)
 
 def b():
     rows = [n for n in readInput().split('\n')]
@@ -42,12 +77,14 @@ if __name__ == '__main__':
     end = time.time()
     exectime = end - start
     print("Executed A in: {}".format(exectime))
-    
+
+    """
     b()
     end = time.time()
     exectime = end - start
     print("Executed B in: {}".format(exectime))
-    
+    """
+
     end = time.time()
     exectime = end - start
     print("Executed in: {}".format(exectime))
