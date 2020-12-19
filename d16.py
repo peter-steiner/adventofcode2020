@@ -51,17 +51,22 @@ def a():
 
     sum = 0
     print("-------------")
+    ticketsCount = 0
     for i in range(itRow+1, rowCount):
         row = rows[i]
         print(row)
+        valid = True
         ticketValues = row.split(",")
         for tkv in ticketValues:
             if numbers[int(tkv)] == "X":
                 sum += int(tkv) 
                 print("Invalid ticket", tkv, ticketValues)
-        if len(row) == 0:    
-            break
+                valid = False
 
+        if valid: 
+            ticketsCount += 1
+
+    print("COntinue", ticketsCount)
     print("A): ", sum)
 
 def b():
