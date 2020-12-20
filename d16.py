@@ -69,10 +69,6 @@ def a():
     print("COntinue", ticketsCount)
     print("A): ", sum)
 
-def b():
-    rows = [n for n in readInput().split('\n')]
-
-    print("B): ")
 
 # Main body
 if __name__ == '__main__':
@@ -82,13 +78,6 @@ if __name__ == '__main__':
     end = time.time()
     exectime = end - start
     print("Executed A in: {}".format(exectime))
-
-    """
-    b()
-    end = time.time()
-    exectime = end - start
-    print("Executed B in: {}".format(exectime))
-    """
 
     end = time.time()
     exectime = end - start
