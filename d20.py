@@ -165,8 +165,6 @@ def a():
 
 
 def b():
-#    rows = [int(n) for n in readInput().split('\n')]
-#   res = 0
     tiles = []
     tmpId = 1
     tmp = [ ["1", "2", "3"], ["4", "5", "6"], ["7", "8", "9"] ]

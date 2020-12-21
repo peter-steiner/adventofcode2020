@@ -12,7 +12,7 @@ import math
 import time
 
 # Global variables
-task="d20-t"
+task="d20"
 infile=task + ".input"
 
 def readInput():
@@ -74,21 +74,91 @@ def printMatrix(matrix, side):
     print("----------------")
     for r in rows:
         print("M", r)
+    
 mutations = []
+maxid = 0
+tileLength = 0
 
-def buildImage(matrix, tiles, x, y, side, depth, path, borders):
+
+def strippAndLookForMonsters(tilesMutated, mut, side):
+    global maxId
+    global tileLength
+
+    tilesStrippedMutated = [None]*(maxId+1)
+    tiles = []
+    for t in tilesMutated:
+        if t != None:
+            tiles.append(t)
+    tm = []
+    #print(tiles)
+    tileMut = None
+    for tile in tiles:
+        arrMut = tile.camarr[1:tileLength-1]
+        for i in range(len(arrMut)):
+            arrMut[i] = arrMut[i][1:tileLength-1]
+        tileMut = Tile(tile.id, arrMut)
+        tilesStrippedMutated[tile.id] = tileMut
+        tm.append(tileMut)
+
+    tileMutLength = len(tm[-1].camarr[0])
+    tmp = []
+    for m in mut:
+        #print(m)
+        tmp.append(tilesStrippedMutated[m])
+
+    #Build big ass array
+    mutAsArr = []
+    max = 0
+    refString = ""
+    # Tiles GROUP row
+    for n in range(side):
+        nPrim = math.floor(n/3)
+        # Tile row
+        for y in range(len(tm[0].camarr)):
+            # Tiles col
+            rowArr = []
+            rowStr = ""
+            for x in range(side):
+                #print(side*n + x, y)
+                rowArr += tmp[side*n +x].camarr[y]
+                rowStr += "".join(tmp[side*n + x].camarr[y])
+            mutAsArr.append(rowArr)
+            refString += rowStr + "\n"
+
+    if mut[0] == 1951 and mut[8] == 1171:
+        print("1337\n", refString)
+
+    #Rotate and flip
+    for i in range(1, 9):
+        sum = 0
+        # TEST CONTENT FOR SEAMONSTERS
+        for k in range(0, side*tileMutLength-3):    
+            tmpStr = ""
+            for n in range(3):
+                tmpStr += "".join(mutAsArr[k+n])
+            #print("-------")
+            sum += findSeaMonster(tmpStr, tileMutLength*side, mut[0])
+            # Test for seamonster
+        if i == 4:
+            # FLIP
+            mutAsArr = mutAsArr[::-1]
+        else:
+            # ROTATE
+            mutAsArr = list(zip(*mutAsArr[::-1]))
+        if sum > max:
+            max = sum
+            countHashes = refString.count("#")
+            print("Found monsters", max, mut, countHashes, countHashes-max*15)
+
+    return
+
+def buildImage(matrix, tiles, tilesMutated, x, y, side, depth, path, borders):
     global mutations
 
     if depth > side*side:
-        lu = matrix[0][0].id
-        lb = matrix[side-1][0].id
-        ru = matrix[0][side-1].id
-        rb = matrix[side-1][side-1].id
-#        print("END", path)
-#        print("END Corners: ", lu, lb, ru, rb, lu*lb*rb*ru) 
-#        print("END", borders)
-#        printMatrix(matrix, side)
         mutations.append([n for n in path[:-1].split(":")])
+#        print("Prosess", mutations[-1][0], mutations[-1])
+        strippAndLookForMonsters(tilesMutated, [int(n) for n in path[:-1].split(":")], side)
         return
 
     if x > 0 and x%side == 0:
@@ -107,11 +177,13 @@ def buildImage(matrix, tiles, x, y, side, depth, path, borders):
         if not str(t.id) in path:
             for i in range(1, 9):
                 #tTMP = Tile(t.id, t.camarr)
+                tilesMutated[t.id] = t
                 if x == 0 and y == 0:
                     matrix[y][x] = t
+
                     tilesTmp = popTile(tiles, t)
                     bordStr = borders + "|" + "NONE" + ":" + t.borders[1] + "*" + t.borders[1]
-                    buildImage(matrix, tilesTmp, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)                   
+                    buildImage(matrix, tilesTmp, tilesMutated, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)                   
                     matrix[y][x] = None
                 if x == 0 and y > 0:
                     # TEST surrounding LEFT & UP
@@ -120,7 +192,7 @@ def buildImage(matrix, tiles, x, y, side, depth, path, borders):
                         matrix[y][x] = t
                         tilesTmp = popTile(tiles, t)
                         bordStr = borders + "|" + upperStr + ":" + t.borders[0]
-                        buildImage(matrix, tilesTmp, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
+                        buildImage(matrix, tilesTmp, tilesMutated, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
                         matrix[y][x] = None
                 if x > 0 and y > 0:
                     # TEST surrounding LEFT & UP
@@ -129,7 +201,7 @@ def buildImage(matrix, tiles, x, y, side, depth, path, borders):
                         matrix[y][x] = t
                         tilesTmp = popTile(tiles, t)
                         bordStr = borders + "|" + leftStr + ":" + t.borders[3] + "&" + upperStr + ":" + t.borders[0]
-                        buildImage(matrix, tilesTmp, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
+                        buildImage(matrix, tilesTmp, tilesMutated, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
                         matrix[y][x] = None
                 if y == 0 and x > 0:
                     #test left  only
@@ -138,7 +210,7 @@ def buildImage(matrix, tiles, x, y, side, depth, path, borders):
                         matrix[y][x] = t
                         tilesTmp = popTile(tiles, t)
                         bordStr = borders + "|" + leftStr + ":" + t.borders[3]
-                        buildImage(matrix, tilesTmp, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
+                        buildImage(matrix, tilesTmp, tilesMutated, x+1, y, side, depth+1, path + str(t.id) + ":", bordStr)
                         matrix[y][x] = None
                 if i == 4:
                     t.flip()
@@ -162,27 +234,25 @@ def buildImage(matrix, tiles, x, y, side, depth, path, borders):
 def findSeaMonster(tmpStr, rowLength, id):
     found = 0
     sea = list(tmpStr)
-    #print("MEH", range(0, len(sea)-57))
     ref1 = rowLength - 18
     ref2 = rowLength - 18
     lastSpot = 0
     points = [ref1, 5, 1, 5, 1, 5, 1, 1]
+    #print()
     for n in range(0, len(sea)-63):
         # Phase
-        #print("!", n)
         hits = 0
         lastSpot = 0
         if sea[n+17] == "#":
             lastSpot = n+17 
             hits += 1
         for p in points:
-            if sea[lastSpot + p] == "#":
+            if (lastSpot + p) < len(sea) and sea[lastSpot + p] == "#":
                 lastSpot = lastSpot+p
                 hits += 1
         lastSpot += ref2
         for i in range(6):
-            #print(lastSpot + i*3)
-            if sea[lastSpot + i*3] == "#":
+            if lastSpot + i*3 < len(sea) and sea[lastSpot + i*3] == "#":
                 hits += 1
         if hits == 15:
             print("Found at ", n, id)
@@ -192,9 +262,13 @@ def findSeaMonster(tmpStr, rowLength, id):
 def a():
     rows = [n for n in readInput().split('\n')]
     tiles = []
+
     global mutations
-    tileId = 0
+    global maxId
+    global tileLength
+
     maxId = 0
+    tileId = 0
     for i in range(len(rows)):
         row = rows[i]
         if "Tile" in row:
@@ -208,91 +282,20 @@ def a():
                 tileMatr.append(tileRow)
             tile = Tile(tileId, tileMatr)
             tiles.append(tile)
-
+    tileLength = len(tiles[-1].camarr[0])
     side = int(math.sqrt(len(tiles)))
     image = []
     for a in range(side):
         image.append([None]*side)
 
-
-    printMatrix(image, side)
-    buildImage(image, tiles, 0, 0, side, 1, "", "")
-
-    for mut in mutations:
-        print(mut)
-
-    tiles[0].p()
-    tileLength = len(tiles[-1].camarr[0])
-
-    print(tileLength)
     tilesMutated = [None]*(maxId+1)
-    tm = []
-    tileMut = None
-    for tile in tiles:
-        arrMut = tile.camarr[1:tileLength-1]
-        for i in range(len(arrMut)):
-            arrMut[i] = arrMut[i][1:tileLength-1]
-        tileMut = Tile(tile.id, arrMut)
-        tilesMutated[tile.id] = tileMut
-        tm.append(tileMut)
+    printMatrix(image, side)
+    #print(side, tiles)
+    buildImage(image, tiles, tilesMutated, 0, 0, side, 1, "", "")
 
-    tileLength = len(tm[-1].camarr[0])
-    tilesMutated[2311].p()
-    """
-    print(len(tm[0].camarr))
-    print(tm[0].camarr)
-    print(len(tm[0].camarr[0]))
-    """
-    max = 0
+    ###############################################
     #mutations = ['1951', '2311', '3079', '2729', '1427', '2473', '2971', '1489', '1171']
-    for mut in mutations:
-        tmp = []
-        for m in mut:
-            #print(m)
-            tmp.append(tilesMutated[int(m)])
-
-        #Build big ass array
-        mutAsArr = []
-        bajs = ""
-        for k in range(0, int(len(mut)/side)):    
-            for n in range(tileLength):
-                mutAsArr.append(tmp[k].camarr[n] + tmp[k+1].camarr[n]+ tmp[k+2].camarr[n])
-                bajs += "".join(tmp[k].camarr[n] + tmp[k+1].camarr[n]+ tmp[k+2].camarr[n]) + "\n"
-        if mut[0] == "1951":
-            print("b")
-            print(bajs)
-        #if mut[0] == "1951":
-            #print(mutAsArr, len(mutAsArr))
-        #Rotate and flip
-        for i in range(1, 9):
-            #print("-------------------\n", mut[0])
-            sum = 0
-            # TEST CONTENT FOR SEAMONSTERS
-            for k in range(0, side*tileLength-3):    
-                tmpStr = ""
-                for n in range(3):
-                    tmpStr += "".join(mutAsArr[k+n])
-                #print("-------")
-                if tmpStr == ".#.#...#.###...#.##.##..#.#.##.###.#.##.##.#####..##.###.####..#.####.##":
-                    print("AW111", mut[0])
-                if tmpStr == "#.###...#.##...#.######..###.###.#######..#####...##.#..#..#.#######.###":
-                    print("AW222", mut[0])
-                #print(tmpStr)
-                sum += findSeaMonster(tmpStr, tileLength*side, mut[0])
-                # Test for seamonster
-            if i == 4:
-                # FLIP
-                mutAsArr = mutAsArr[::-1]
-            else:
-                # ROTATE
-                mutAsArr = list(zip(*mutAsArr[::-1]))
-            if sum > max:
-                max = sum
-                print("Found monsters", max, mut)
-
 def b():
-#    rows = [int(n) for n in readInput().split('\n')]
-#   res = 0
     print("ABCD")
     tiles = []
     tmpId = 1
@@ -325,7 +328,6 @@ def b():
     print("4")
     tiles[0].rotateAntiClock()
     tiles[0].p()
-...####.#.####.##.###...
 
     print("###############################")
     tiles[0].p()
@@ -380,23 +382,3 @@ if __name__ == '__main__':
     exectime = end - start
     print("Executed in: {}".format(exectime))
     sys.exit(1)
-
-
-
-"""
-
-for k in range(0, side*tileLength-3):    
-                tmpStr = ""
-                for n in range(3):
-                    # Row n + (n + 1) + (n +2)
-                    y = math.floor((k+n)/tileLength)
-                    for s in range(side):
-                        #Col 1,2,3
-                        sp = 3 * y
-                        #print(k, sp+s, (k+n%8))
-                        tmpStr += "".join(tmp[sp + s].camarr[(k+n)%8])
-                #print("-------")
-                #print(tmpStr)
-                sum += findSeaMonster(tmpStr, tileLength*side)
-                # Test for seamonster
-"""
