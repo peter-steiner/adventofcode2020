@@ -28,8 +28,8 @@ class Tile:
         self.camarr = camarr[:]
         self.borders = [""]*4
         self.matched = False
-        self.rotateClock
-        self.rotateAntiClock
+        self.rotateClock()
+        self.rotateAntiClock()
 
     def flip(self):
         self.camarr = self.camarr[::-1]
