@@ -20,6 +20,95 @@ def readInput():
         data = file.read()
     file.close()
     return data
+gameG = 0
+def recursiveCombat(p1, p2):
+    global gameG
+    gameG += 1
+    game = gameG
+    #print("Enter Game {} with \n{}\n{}".format(game, p1[::-1], p2[::-1]))
+    stack = []
+    winnerStack = []
+    #for i in range(1, 10):
+    p1Hands = []
+    p2Hands = []
+    i = 0
+    while True:
+        i += 1
+        """
+        print("-- Round " , i, " (Game", game, ") --")
+        print("Player 1's deck: {} \nPlayer 2's deck: {}".format(p1, p2))
+        print("Player 1 plays: ", p1[-1])
+        print("Player 2 plays: ", p2[-1])
+        """
+        # Check each players hand with previous hands
+        p2tmp = ",".join([str(n) for n in p2])
+        p1tmp = ",".join([str(n) for n in p1])
+        if p1tmp in p1Hands or p2tmp in p2Hands:
+            """
+            print("Player 1 wins round", i, "out of game ", game, "!")
+            print("Winner: P1", p1tmp, p2tmp, p1Hands)
+            """
+            winnerStack = p1[:]
+            return [False, "p1", winnerStack]
+        # Add dealing to history
+        p1Hands.append(p1tmp) 
+        p2Hands.append(p2tmp) 
+
+        """
+        if p2tmp in p2Hands:
+            print("Player 2 wins round", i, "out of game ", game, "!")
+            print("Winner: P2", p2, p2Hands)
+            winnerStack = p2[:]
+            return [False, "p2", winnerStack]
+        """
+        # Play hands
+        c1 = p1.pop()
+        c2 = p2.pop()
+        stack.append(c1) 
+        stack.append(c2) 
+
+        # C1 as default winner
+        winner = ""
+        # Subgame of recursive combat
+        #print("Seriöst P1", c1, p1, len(p1), c1 >= len(p1))
+        #print("Seriöst P2", c2, p2, len(p2), c2 >= len(p2))
+        if c1 <= len(p1) and c2 <= len(p2):
+            #print("-- Round " , i, "-- ENTER RECURSIVE HELL --- GAME ", game)
+            #print("Playing a sub-game to determine the winner...")
+            break_, winner, winnerStack = recursiveCombat(p1[len(p1)-c1:], p2[len(p2)-c2:])
+            
+            if break_:
+                print("###################\n####################\n##############")
+                return [False, winner, winnerStack]
+
+        if winner == "":    
+            # C2 wins
+            ls = len(stack)
+            if stack[ls-2] < stack[ls-1]:
+                winner = "p2"
+            else:
+                winner = "p1"
+
+        #print("winner", winner, stack)
+        while len(stack) > 0:
+            if winner == "p2":  
+                p2.insert(0, stack.pop())
+                p2.insert(0, stack.pop())
+            else:
+                p1.insert(0, stack.pop(0))
+                p1.insert(0, stack.pop(0))
+        #print("p1, p2\n-- Round ", i, " --\n", p1[::-1], p2[::-1])
+        if not p1:
+            #print("Player 2 wins round", i, "out of game ", game, "!")
+            winnerStack = p2[:]
+            winner = "p2"
+            return [False, winner, winnerStack]
+        if not p2:
+            #print("Player 1 wins round", i, "out of game ", game, "!")
+            winner = "p1"
+            winnerStack = p1[:]
+            return [False, winner, winnerStack]
+    return [False, winner, winnerStack]
 
 def a():
     rows = [n for n in readInput().split('\n')]
@@ -42,45 +131,16 @@ def a():
     p1 = p1[::-1]
     p2 = p2[::-1]
 
-    print(p1)
-    print(p2)
-    stack = []
-    winnerStack = []
-    points = 0
-    #for i in range(1, 10):
-    i = 0
-    while True:
-        i += 1
-        stack.append(p1.pop()) 
-        stack.append(p2.pop()) 
-        # C1 as default winner
-        winner = "p1"
-        # C2 wins
-        ls = len(stack)
-        if stack[ls-2] < stack[ls-1]:
-            winner = "p2"
+    print("Starting hands Player 1", p1)
+    print("Starting hands Player 2", p2)
 
-        #print("winner", winner, stack)
-        if winner == "p1":  
-            stack = stack[::-1]
-        while len(stack) > 0:
-            if winner == "p2":  
-                p2.insert(0, stack.pop())
-                p2.insert(0, stack.pop())
-            else:
-                p1.insert(0, stack.pop())
-                p1.insert(0, stack.pop())
-        #print("p1, p2\n-- Round ", i, " --\n", p1[::-1], p2[::-1])
-        if not p1:
-            print("Winner: P2", p2)
-            winnerStack = p2[:]
-            break
-        if not p2:
-            print("Winner: P1", p1)
-            winnerStack = p1[:]
-            break 
-    
+    break_, winner, winnerStack = recursiveCombat(p1, p2)
+    if break_:
+        print("Hard break")
+
+    points = 0
     for i in range(len(winnerStack)):
+        print(i+1, winnerStack[i], (i+1)*winnerStack[i])
         points += (i+1)*winnerStack[i]  
     res = 0
     print("B): ", points)
